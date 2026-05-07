@@ -1,0 +1,90 @@
+[
+  {
+    "cat": "Abrigo y vestimenta",
+    "items": [
+      { "id": "av01", "name": "Mantas / frazadas térmicas",       "meta": "Una por persona",                          "done": false, "badge": "miss", "expDate": "" },
+      { "id": "av02", "name": "Muda completa de ropa de abrigo",  "meta": "Incluye ropa interior y calcetines",       "done": false, "badge": "miss", "expDate": "" },
+      { "id": "av03", "name": "Calzado resistente",               "meta": "Suela gruesa, para escombros o barro",     "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Iluminación y comunicación",
+    "items": [
+      { "id": "ic01", "name": "Linterna",                          "meta": "Probar mensualmente",                     "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ic02", "name": "Radio AM/FM a pilas o manivela",    "meta": "Para alertas oficiales",                  "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ic03", "name": "Pilas de repuesto",                 "meta": "Del tamaño adecuado para cada equipo",    "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Botiquín y seguridad",
+    "items": [
+      { "id": "bs01", "name": "Botiquín de primeros auxilios",     "meta": "Vendas, gasas, antiséptico",              "done": false, "badge": "miss", "expDate": "" },
+      { "id": "bs02", "name": "Medicamentos con receta",           "meta": "En recipiente impermeable",               "done": false, "badge": "miss", "expDate": "" },
+      { "id": "bs03", "name": "Silbato para pedir ayuda",          "meta": "Uno por persona",                         "done": false, "badge": "miss", "expDate": "" },
+      { "id": "bs04", "name": "Mascarillas",                       "meta": "Ante humo, polvo o gases",                "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Herramientas y abrigo rápido",
+    "items": [
+      { "id": "ha01", "name": "Herramienta multiusos de bolsillo", "meta": "Tipo Victorinox o similar",               "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ha02", "name": "Fósforos a prueba de agua",         "meta": "En recipiente hermético",                 "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ha03", "name": "Cinta adhesiva a prueba de agua",   "meta": "",                                        "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ha04", "name": "Lona plástica",                     "meta": "Para cubrirse o improvisar refugio",      "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Utensilios",
+    "items": [
+      { "id": "ut01", "name": "Cubiertos (cuchara, tenedor, cuchillo)", "meta": "",                                   "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ut02", "name": "Abrelatas manual",                  "meta": "",                                        "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Higiene personal",
+    "items": [
+      { "id": "hp01", "name": "Cepillos de dientes y pasta",       "meta": "Uno por persona",                         "done": false, "badge": "miss", "expDate": "" },
+      { "id": "hp02", "name": "Jabón",                             "meta": "",                                        "done": false, "badge": "miss", "expDate": "" },
+      { "id": "hp03", "name": "Toallas",                           "meta": "Compactas o microfibra",                  "done": false, "badge": "miss", "expDate": "" },
+      { "id": "hp04", "name": "Papel higiénico",                   "meta": "En bolsa hermética",                      "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Necesidades especiales",
+    "items": [
+      { "id": "ne01", "name": "Artículos para cuidado de niños",   "meta": "Pañales, leche, chupete, etc.",           "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ne02", "name": "Artículos para personas mayores o enfermas", "meta": "Adaptado a cada caso",           "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Agua y alimentación",
+    "items": [
+      { "id": "aa01", "name": "Agua embotellada (3L/persona)",     "meta": "Mín. 3 días de reserva",                 "done": false, "badge": "miss", "expDate": "" },
+      { "id": "aa02", "name": "Alimentos no perecederos",          "meta": "Enlatados, barras energéticas",           "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Documentos e información",
+    "items": [
+      { "id": "di01", "name": "Copias de documentos importantes",  "meta": "DNI, CUIL, recibos — en sobre hermético", "done": false, "badge": "miss", "expDate": "" },
+      { "id": "di02", "name": "Lista de contactos de emergencia",  "meta": "Impresa, no solo en el celular",          "done": false, "badge": "miss", "expDate": "" },
+      { "id": "di03", "name": "Mapa de la zona y puntos de encuentro", "meta": "Con rutas de evacuación marcadas",    "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Dinero y llaves",
+    "items": [
+      { "id": "dl01", "name": "Tarjetas bancarias",                "meta": "",                                        "done": false, "badge": "miss", "expDate": "" },
+      { "id": "dl02", "name": "Efectivo en billetes chicos",       "meta": "Por si los cajeros no funcionan",         "done": false, "badge": "miss", "expDate": "" },
+      { "id": "dl03", "name": "Juego extra de llaves (casa y auto)", "meta": "En sobre rotulado",                     "done": false, "badge": "miss", "expDate": "" }
+    ]
+  },
+  {
+    "cat": "Para los niños y espíritu",
+    "items": [
+      { "id": "ne03", "name": "Papel y lápices",                   "meta": "",                                        "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ne04", "name": "Libros y juegos para niños",        "meta": "Sin batería ni pantalla",                 "done": false, "badge": "miss", "expDate": "" },
+      { "id": "ne05", "name": "Biblia",                            "meta": "",                                        "done": false, "badge": "miss", "expDate": "" }
+    ]
+  }
+]

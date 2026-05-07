@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#C93A39" />
+  <meta name="description" content="Preparación familiar para emergencias. Funciona sin internet." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Emergencia" />
+
+  <title>EmergenciaApp</title>
+
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header class="app-header" id="app-header">
+    <div class="app-header-top">
+      <div class="app-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="app-header-title" id="header-title">EmergenciaApp</div>
+        <div class="app-header-subtitle" id="header-subtitle">Preparación familiar</div>
+      </div>
+    </div>
+    <!-- Barra de preparación (solo visible en Dashboard) -->
+    <div class="readiness-wrap" id="readiness-wrap">
+      <div class="readiness-row">
+        <span>Nivel de preparación</span>
+        <span id="readiness-pct">0%</span>
+      </div>
+      <div class="readiness-bar">
+        <div class="readiness-fill" id="readiness-fill" style="width: 0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Pantallas ──────────────────────────────────────── -->
+  <main id="main-content">
+
+    <div class="screen active" id="screen-dashboard"></div>
+    <div class="screen"        id="screen-backpack"></div>
+    <div class="screen"        id="screen-contacts"></div>
+    <div class="screen"        id="screen-guides"></div>
+    <div class="screen"        id="screen-supplies"></div>
+
+  </main>
+
+  <!-- ── Navegación inferior ────────────────────────────── -->
+  <nav class="app-nav" id="app-nav"></nav>
+
+  <!-- ── Toast ──────────────────────────────────────────── -->
+  <div class="toast" id="toast"></div>
+
+</div><!-- /#app -->
+
+<script type="module">
+  // ── Imports ──────────────────────────────────────────────
+  import { SCREENS, NAV_ITEMS }    from './src/core/constants.js';
+  import { calcReadiness }          from './src/core/utils.js';
+  import { loadInventory }          from './src/data/storage.js';
+  import DEFAULT_INVENTORY          from './src/data/inventory.json' assert { type: 'json' };
+
+  import { renderDashboard }        from './src/screens/Dashboard.js';
+  import { renderBackpack }         from './src/screens/Backpack.js';
+  import { renderContacts }         from './src/screens/Contacts.js';
+  import { renderGuides }           from './src/screens/Guides.js';
+  import { renderSupplies }         from './src/screens/Supplies.js';
+
+  import { startPeriodicCheck,
+           requestPermission }      from './src/services/Notifications.js';
+  import { loadFoodItems,
+           loadLastReview }         from './src/data/storage.js';
+
+  // ── Estado global mínimo ──────────────────────────────
+  window.App = {
+    currentScreen: SCREENS.DASHBOARD,
+
+    // Navegar a otra pantalla
+    navigate(screenId, options = {}) {
+      switchScreen(screenId, options);
+    },
+
+    // Toast
+    toast(msg, duration = 2500) {
+      showToast(msg, duration);
+    },
+
+    // Actualizar barra de preparación
+    updateReadiness(data) {
+      const pct = calcReadiness(data);
+      document.getElementById('readiness-pct').textContent = pct + '%';
+      document.getElementById('readiness-fill').style.width = pct + '%';
+    },
+  };
+
+  // ── Service Worker ────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registrado:', reg.scope))
+      .catch(err => console.warn('[SW] Error:', err));
+  }
+
+  // ── Navegación inferior ───────────────────────────────
+  function buildNav() {
+    const nav = document.getElementById('app-nav');
+    nav.innerHTML = NAV_ITEMS.map(item => `
+      <button class="nav-item ${item.id === SCREENS.DASHBOARD ? 'active' : ''}"
+              id="nav-${item.id}"
+              onclick="App.navigate('${item.id}')"
+              aria-label="${item.label}">
+        <span class="nav-item-icon" aria-hidden="true">${item.icon}</span>
+        <span class="nav-item-label">${item.label}</span>
+      </button>
+    `).join('');
+  }
+
+  // ── Router ────────────────────────────────────────────
+  const TITLES = {
+    [SCREENS.DASHBOARD]: { title: 'EmergenciaApp',         sub: 'Preparación familiar'         },
+    [SCREENS.BACKPACK]:  { title: 'Mochila de emergencia', sub: 'Checklist de suministros'     },
+    [SCREENS.CONTACTS]:  { title: 'Contactos',             sub: 'Red de apoyo familiar'        },
+    [SCREENS.GUIDES]:    { title: 'Guías',                 sub: 'Antes · Durante · Después'    },
+    [SCREENS.SUPPLIES]:  { title: 'Suministros en el hogar', sub: 'Agua y alimentos para 3 días' },
+  };
+
+  function switchScreen(screenId, options = {}) {
+    if (screenId === App.currentScreen && !options.force) return;
+
+    // Ocultar todas las pantallas
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+    // Mostrar la nueva
+    document.getElementById('screen-' + screenId).classList.add('active');
+    document.getElementById('nav-' + screenId)?.classList.add('active');
+
+    App.currentScreen = screenId;
+
+    // Actualizar header
+    const t = TITLES[screenId] || TITLES[SCREENS.DASHBOARD];
+    document.getElementById('header-title').textContent    = t.title;
+    document.getElementById('header-subtitle').textContent = t.sub;
+
+    // Barra de readiness solo en Dashboard
+    document.getElementById('readiness-wrap').style.display =
+      screenId === SCREENS.DASHBOARD ? 'block' : 'none';
+
+    // Guardar en hash para deep-link
+    history.replaceState(null, '', '#' + screenId);
+
+    // Scroll al tope
+    document.getElementById('screen-' + screenId).scrollTop = 0;
+  }
+
+  // ── Toast ─────────────────────────────────────────────
+  let _toastTimer = null;
+  function showToast(msg, duration = 2500) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  async function init() {
+    buildNav();
+
+    // Renderizar pantallas
+    renderDashboard(document.getElementById('screen-dashboard'));
+    renderBackpack(document.getElementById('screen-backpack'));
+    renderContacts(document.getElementById('screen-contacts'));
+    renderGuides(document.getElementById('screen-guides'));
+    renderSupplies(document.getElementById('screen-supplies'));
+
+    // Deep-link desde hash
+    const hash = location.hash.replace('#', '');
+    if (hash && Object.values(SCREENS).includes(hash)) {
+      switchScreen(hash);
+    }
+
+    // Pedir permiso de notificaciones (en segundo plano)
+    await requestPermission();
+
+    // Chequeo periódico de vencimientos
+    const inventory = loadInventory(DEFAULT_INVENTORY);
+    const allItems  = inventory.flatMap(cat => cat.items);
+
+    startPeriodicCheck(
+      () => [...allItems, ...loadFoodItems([])],
+      ()  => loadLastReview()
+    );
+  }
+
+  init();
+</script>
+</body>
+</html>
