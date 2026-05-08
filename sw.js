@@ -4,11 +4,12 @@
    La app funciona 100% offline una vez instalada.
    ============================================================ */
 
-const CACHE_NAME = 'emergencia-v1.1';
+const CACHE_NAME = 'emergencia-v1.2';
 
 // Todos los archivos que se cachean al instalar
 const PRECACHE = [
   './index.html',
+  './favicon.ico',
   './manifest.json',
   './assets/styles.css',
   './src/core/constants.js',
