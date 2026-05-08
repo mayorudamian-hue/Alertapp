@@ -19,7 +19,7 @@ import { refresh as refreshDashboard }           from './Dashboard.js';
 
 // ── Datos iniciales ───────────────────────────────────────
 const DEFAULT_CONTACTS = [
-  { id: 'c01', name: 'Superintendente de grupo',    role: 'Sup. de grupo',  phone: '', group: CONTACT_GROUPS.CONGREGACION, color: '#ECEAFE:#4E45B0' },
+  { id: 'c01', name: 'Superintendente de grupo', role: 'Sup. de grupo',  phone: '', group: CONTACT_GROUPS.CONGREGACION, color: '#ECEAFE:#4E45B0' },
   { id: 'c02', name: 'Auxiliar de grupo',      role: 'Aux. de grupo',  phone: '', group: CONTACT_GROUPS.CONGREGACION, color: '#ECEAFE:#4E45B0' },
   { id: 'c03', name: '',                        role: 'Contacto personal de emergencia', phone: '', group: CONTACT_GROUPS.EMERGENCIA,  color: '#F7EDD6:#B07213' },
   { id: 'c04', name: '',                        role: 'Familia',        phone: '', group: CONTACT_GROUPS.FAMILIA,      color: '#DCF0EA:#0E6650' },
