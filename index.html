@@ -72,8 +72,9 @@
   // ── Imports ──────────────────────────────────────────────
   import { SCREENS, NAV_ITEMS }    from './src/core/constants.js';
   import { calcReadiness }          from './src/core/utils.js';
-  import { loadInventory }          from './src/data/storage.js';
-  import DEFAULT_INVENTORY          from './src/data/inventory.json' assert { type: 'json' };
+  import { loadInventory,
+           loadFoodItems,
+           loadLastReview }         from './src/data/storage.js';
 
   import { renderDashboard }        from './src/screens/Dashboard.js';
   import { renderBackpack }         from './src/screens/Backpack.js';
@@ -83,8 +84,6 @@
 
   import { startPeriodicCheck,
            requestPermission }      from './src/services/Notifications.js';
-  import { loadFoodItems,
-           loadLastReview }         from './src/data/storage.js';
 
   // ── Estado global mínimo ──────────────────────────────
   window.App = {
@@ -198,7 +197,7 @@
     await requestPermission();
 
     // Chequeo periódico de vencimientos
-    const inventory = loadInventory(DEFAULT_INVENTORY);
+    const inventory = loadInventory();
     const allItems  = inventory.flatMap(cat => cat.items);
 
     startPeriodicCheck(

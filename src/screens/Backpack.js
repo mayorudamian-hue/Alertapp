@@ -15,10 +15,8 @@
 import { EXP_STATUS }              from '../core/constants.js';
 import { expiryStatus }            from '../core/utils.js';
 import { validateInventoryItem }   from '../core/validators.js';
-import { loadInventory, saveInventory } from '../data/storage.js';
+import { loadInventory, saveInventory, DEFAULT_INVENTORY } from '../data/storage.js';
 import { refresh as refreshDashboard }  from './Dashboard.js';
-
-import DEFAULT_INVENTORY from '../data/inventory.json' assert { type: 'json' };
 
 // ── Estado interno ────────────────────────────────────────
 let _container  = null;

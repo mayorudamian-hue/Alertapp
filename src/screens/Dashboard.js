@@ -16,10 +16,9 @@ import {
   loadFoodItems,
   loadAntesChecks,
   loadLastReview,
+  saveLastReview,
+  DEFAULT_INVENTORY,
 }                                       from '../data/storage.js';
-
-// ── Datos iniciales (fallback si localStorage está vacío) ─
-import DEFAULT_INVENTORY from '../data/inventory.json' assert { type: 'json' };
 
 const DEFAULT_CONTACTS = [];
 const ANTES_TOTAL      = 12;   // total de tareas en Guías › Antes
@@ -427,7 +426,7 @@ function bindEvents(container) {
   // Marcar revisión anual
   container.querySelector('#btn-mark-review')?.addEventListener('click', async () => {
     const todayStr = new Date().toISOString().slice(0, 10);
-    localStorage.setItem('ea_last_review', JSON.stringify(todayStr));
+    saveLastReview(todayStr);
     App.toast('Revisión anual registrada ✓');
     refresh();
   });
