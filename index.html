@@ -69,6 +69,19 @@
 
 </div><!-- /#app -->
 
+<!-- ── Filtro de errores de extensiones del navegador ─── -->
+<script>
+  // Suprime el error "message channel closed" que generan extensiones
+  // del navegador (bloqueadores, LastPass, etc.) — no es un error de la app.
+  window.addEventListener('unhandledrejection', e => {
+    const msg = e?.reason?.message || '';
+    if (msg.includes('message channel closed') ||
+        msg.includes('listener indicated an asynchronous response')) {
+      e.preventDefault();
+    }
+  });
+</script>
+
 <script type="module">
   // ── Imports ──────────────────────────────────────────────
   import { SCREENS, NAV_ITEMS }    from './src/core/constants.js';

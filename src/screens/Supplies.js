@@ -447,7 +447,13 @@ function _persistFood() {
 
 // ── Binding de eventos ────────────────────────────────────
 
+let _abortCtrl = null;
+
 function _bindEvents() {
+  if (_abortCtrl) _abortCtrl.abort();
+  _abortCtrl = new AbortController();
+  const sig = { signal: _abortCtrl.signal };
+
   _container?.addEventListener('click', e => {
     const el = e.target.closest('[data-action]');
     if (!el) return;
@@ -502,19 +508,18 @@ function _bindEvents() {
         _markReview();
         break;
     }
-  });
+  }, sig);
 
-  // Enter en input de fecha
+  // Enter en input de fecha y en formulario nuevo alimento
   _container?.addEventListener('keydown', e => {
     if (e.key === 'Enter' && e.target.type === 'date') {
       const id = e.target.id.replace('food-date-', '');
       _saveFoodDate(id, e.target.value);
     }
-    // Enter en formulario nuevo alimento
     if (e.key === 'Enter' && e.target.id === 'af-name') {
       _container.querySelector('[data-action="confirm-add-food"]')?.click();
     }
-  });
+  }, sig);
 }
 
 // ── Helpers ───────────────────────────────────────────────

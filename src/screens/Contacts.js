@@ -346,7 +346,13 @@ function _save() {
 
 // ── Eventos ───────────────────────────────────────────────
 
+let _abortCtrl = null;
+
 function _bindEvents() {
+  if (_abortCtrl) _abortCtrl.abort();
+  _abortCtrl = new AbortController();
+  const sig = { signal: _abortCtrl.signal };
+
   _container?.addEventListener('click', e => {
     const el     = e.target.closest('[data-action]');
     if (!el) return;
@@ -361,17 +367,16 @@ function _bindEvents() {
       case 'form-cancel': _cancelForm();           break;
       case 'form-save':   _saveForm(id || null);   break;
     }
-  });
+  }, sig);
 
   // Enter en campos del formulario
   _container?.querySelectorAll('#cf-name, #cf-role, #cf-phone').forEach(input => {
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const saveBtn = _container.querySelector('[data-action="form-save"]');
-        saveBtn?.click();
+        _container.querySelector('[data-action="form-save"]')?.click();
       }
-    });
+    }, sig);
   });
 }
 

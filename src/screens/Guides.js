@@ -525,7 +525,7 @@ function _toggleCheck(phase, idx) {
     _despuesChecks[idx] = !_despuesChecks[idx];
     saveDespuesChecks(_despuesChecks);
   }
-  _render();
+  setTimeout(() => _render(), 0);
   refreshDashboard();
 }
 
@@ -535,7 +535,9 @@ function _toggleDisaster(id) {
   } else {
     _openDisasters.add(id);
   }
-  _render();
+  // setTimeout(0) evita que el nuevo listener (post-AbortController)
+  // capture el mismo evento que disparó este toggle en móviles
+  setTimeout(() => _render(), 0);
 }
 
 function _editMeeting(key) {
@@ -572,7 +574,7 @@ function _saveMeeting(key, disasterId, slot) {
 function _switchPhase(phase) {
   _phase       = phase;
   _editingSlot = null;
-  _render();
+  setTimeout(() => _render(), 0);
 }
 
 function _chipNav(nav) {
@@ -599,9 +601,17 @@ function _chipNav(nav) {
 
 // ── Binding de eventos ────────────────────────────────────
 
+// AbortController para cancelar listeners anteriores en cada re-render
+let _abortCtrl = null;
+
 function _bindEvents() {
+  // Cancelar listeners del render anterior
+  if (_abortCtrl) _abortCtrl.abort();
+  _abortCtrl = new AbortController();
+  const sig = { signal: _abortCtrl.signal };
+
   _container?.addEventListener('click', e => {
-    const el     = e.target.closest('[data-action]');
+    const el = e.target.closest('[data-action]');
     if (!el) return;
 
     const action = el.dataset.action;
@@ -620,7 +630,7 @@ function _bindEvents() {
         break;
 
       case 'edit-meeting':
-        e.stopPropagation(); // no colapsar la tarjeta
+        e.stopPropagation();
         _editMeeting(el.dataset.key);
         break;
 
@@ -634,16 +644,16 @@ function _bindEvents() {
         _chipNav(el.dataset.nav);
         break;
     }
-  });
+  }, sig);
 
   // Enter en inputs de puntos de encuentro
   _container?.addEventListener('keydown', e => {
     if (e.key === 'Enter' && e.target.classList.contains('meeting-slot-input')) {
-      const key      = e.target.id.replace('mp-input-', '');
+      const key = e.target.id.replace('mp-input-', '');
       const [disId, slot] = key.split('-p');
       _saveMeeting(key, disId, 'p' + slot);
     }
-  });
+  }, sig);
 }
 
 // ── Helper ────────────────────────────────────────────────

@@ -415,19 +415,25 @@ function buildLastReviewNote(lastReview) {
 
 // ── Eventos ───────────────────────────────────────────────
 
-function bindEvents(container) {
-  // Navegación desde tarjetas y alertas
-  container.querySelectorAll('[data-nav]').forEach(el => {
-    el.addEventListener('click', () => {
-      App.navigate(el.dataset.nav);
-    });
-  });
+let _abortCtrl = null;
 
-  // Marcar revisión anual
-  container.querySelector('#btn-mark-review')?.addEventListener('click', async () => {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    saveLastReview(todayStr);
-    App.toast('Revisión anual registrada ✓');
-    refresh();
-  });
+function bindEvents(container) {
+  if (_abortCtrl) _abortCtrl.abort();
+  _abortCtrl = new AbortController();
+  const sig = { signal: _abortCtrl.signal };
+
+  // Delegación única para navegación y botones
+  container.addEventListener('click', e => {
+    // Tarjetas/alertas con data-nav
+    const navEl = e.target.closest('[data-nav]');
+    if (navEl) { App.navigate(navEl.dataset.nav); return; }
+
+    // Botón revisión anual
+    if (e.target.closest('#btn-mark-review')) {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      saveLastReview(todayStr);
+      App.toast('Revisión anual registrada ✓');
+      refresh();
+    }
+  }, sig);
 }
