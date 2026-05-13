@@ -289,8 +289,8 @@ function _buildPhaseTabs() {
   const html = tabs.map(t => `
     <button class="phase-tab ${_phase === t.id ? 'p-' + t.id : ''}"
             data-action="switch-phase" data-phase="${t.id}">
-      <span class="phase-tab-icon">${t.icon}</span>
-      <span class="phase-tab-label">${t.label}</span>
+      <span class="phase-tab-icon" style="pointer-events:none;">${t.icon}</span>
+      <span class="phase-tab-label" style="pointer-events:none;">${t.label}</span>
     </button>
   `).join('');
 
@@ -360,16 +360,20 @@ function _buildDisasterCard(disaster) {
 
   return `
     <div class="collapsible ${isOpen ? 'is-open' : ''}" id="disaster-${disaster.id}">
-      <div class="collapsible-header" data-action="toggle-disaster" data-id="${disaster.id}">
-        <div class="collapsible-icon-wrap" style="background:${disaster.iconBg};">
+      <button class="collapsible-header"
+              data-action="toggle-disaster"
+              data-id="${disaster.id}"
+              style="width:100%; text-align:left; border:none; cursor:pointer; background:var(--bg-card);">
+        <div class="collapsible-icon-wrap"
+             style="background:${disaster.iconBg}; pointer-events:none;">
           ${disaster.icon}
         </div>
-        <div>
+        <div style="pointer-events:none;">
           <div class="collapsible-title">${_escHtml(disaster.title)}</div>
           <div class="collapsible-sub">${_escHtml(disaster.sub)}</div>
         </div>
-        <div class="collapsible-arrow">▼</div>
-      </div>
+        <div class="collapsible-arrow" style="pointer-events:none;">▼</div>
+      </button>
       <div class="collapsible-body">
         ${meetingHtml}
         ${steps}
@@ -471,12 +475,13 @@ function _buildChecklistItems(data, checks, phase) {
       <div class="check-item" data-action="toggle-check"
            data-phase="${phase}" data-idx="${idx}"
            style="cursor:pointer;">
-        <div class="cb ${done ? 'is-checked' : ''}" style="flex-shrink:0; margin-top:2px;"></div>
-        <div style="flex:1; min-width:0;">
+        <div class="cb ${done ? 'is-checked' : ''}"
+             style="flex-shrink:0; margin-top:2px; pointer-events:none;"></div>
+        <div style="flex:1; min-width:0; pointer-events:none;">
           <div class="check-item-name ${done ? 'is-done' : ''}">${_escHtml(entry.text)}</div>
           ${entry.note ? `<div class="check-item-meta">${_escHtml(entry.note)}</div>` : ''}
-          ${chipsH}
         </div>
+        ${chipsH ? `<div style="pointer-events:auto;">${chipsH}</div>` : ''}
       </div>
     `;
   }).join('');
@@ -611,6 +616,10 @@ function _bindEvents() {
   const sig = { signal: _abortCtrl.signal };
 
   _container?.addEventListener('click', e => {
+    // Evitar procesar el mismo evento más de una vez
+    if (e._handled) return;
+    e._handled = true;
+
     const el = e.target.closest('[data-action]');
     if (!el) return;
 
@@ -626,6 +635,7 @@ function _bindEvents() {
         break;
 
       case 'toggle-disaster':
+        e.stopPropagation();
         _toggleDisaster(el.dataset.id);
         break;
 
